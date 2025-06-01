@@ -1,0 +1,8 @@
+*.npy
+*.pt
+*.ckpt
+*.log
+*.csv
+__pycache__/
+.venv/
+us-accidents/
