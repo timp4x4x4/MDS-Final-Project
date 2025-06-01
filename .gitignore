@@ -6,4 +6,7 @@
 __pycache__/
 .venv/
 us-accidents/
+catboost_info/
 model_output/
+model_output/label_encoders.pkl
+model_output/label_encoders.pkl
