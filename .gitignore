@@ -2,7 +2,7 @@
 *.pt
 *.ckpt
 *.log
-*.csv
+undersampled_2022.csv
 __pycache__/
 .venv/
 us-accidents/
