@@ -8,6 +8,4 @@ __pycache__/
 us-accidents/
 catboost_info/
 model_output/
-model_output/label_encoders.pkl
-model_output/label_encoders.pkl
 *.DS_Store
