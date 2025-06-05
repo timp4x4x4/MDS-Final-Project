@@ -127,15 +127,15 @@ def load_all_data(file_path, sample_frac=1.0):
 def split_data_by_time(df):
     """按時間分割資料：2016-2022年3月 vs 2022年4月-2023年3月"""
     # 設定時間分割點
-    train_end_date = pd.Timestamp('2022-03-31 23:59:59')
-    test_start_date = pd.Timestamp('2022-04-01 00:00:00')
+    train_end_date = pd.Timestamp('2022-12-31 23:59:59')
+    test_start_date = pd.Timestamp('2023-01-01 00:00:00')
     
     # 分割資料
     df_train = df[df['Start_Time'] <= train_end_date].copy()
     df_test = df[df['Start_Time'] >= test_start_date].copy()
     
-    print(f"\n訓練資料 (2016-01 到 2022-03): {len(df_train):,} 筆")
-    print(f"測試資料 (2022-04 到 2023-03): {len(df_test):,} 筆")
+    print(f"\n訓練資料 (2016-01 到 2022-12): {len(df_train):,} 筆")
+    print(f"測試資料 (2023-01 到 2023-03): {len(df_test):,} 筆")
     
     # 顯示訓練資料的時間範圍
     print(f"\n訓練資料時間範圍:")
@@ -490,7 +490,7 @@ def run_experiment(df_train, df_test):
 
 def create_kepler_predictions_ca(df_test, model, feature_columns, label_encoders):
     """使用全美模型預測，但只輸出 California 的結果"""
-    print("\n準備 California 2022.04-2023.03 Kepler.gl 預測資料...")
+    print("\n準備 California 2023.01-2023.03 Kepler.gl 預測資料...")
     
     # 先篩選出 California 的資料
     df_test_ca = df_test[df_test['State'] == 'CA'].copy()
@@ -536,6 +536,7 @@ def create_kepler_predictions_ca(df_test, model, feature_columns, label_encoders
     all_probs = np.vstack(all_probs)
     
     # 計算風險分數和等級
+    weighted_severity = (all_probs * np.array([1, 2, 3, 4])).sum(axis=1)
     risk_scores = all_probs.max(axis=1)
     predicted_severity = all_probs.argmax(axis=1) + 1  # 轉回 1-4
     risk_levels = np.where(risk_scores > 0.7, 'High',
@@ -548,6 +549,7 @@ def create_kepler_predictions_ca(df_test, model, feature_columns, label_encoders
         'timestamp': df_test_ca['Start_Time'].values,
         'actual_severity': df_test_ca['Severity'].values,
         'predicted_severity': predicted_severity,
+        'weighted_severity' : weighted_severity, 
         'risk_score': risk_scores,
         'risk_level': risk_levels,
         'hour': df_test_processed['Hour'].values,
@@ -593,7 +595,7 @@ def main():
     )
     
     # 儲存結果
-    output_file = 'california_accidents_2022_04_to_2023_03_predictions.csv'
+    output_file = 'california_accidents_2023_01_to_2023_03_predictions.csv'
     kepler_df.to_csv(output_file, index=False)
     
     file_size_mb = os.path.getsize(output_file) / (1024 * 1024)
@@ -644,9 +646,9 @@ def main():
     print("\n" + "="*50)
     print("實驗總結")
     print("="*50)
-    print(f"訓練資料: 2016-01 到 2022-03 全美事故")
-    print(f"測試資料: 2022-04 到 2023-03 全美事故")
-    print(f"輸出資料: 2022-04 到 2023-03 California 事故")
+    print(f"訓練資料: 2016-01 到 2022-12 全美事故")
+    print(f"測試資料: 2023-01 到 2023-03 全美事故")
+    print(f"輸出資料: 2023-01 到 2023-03 California 事故")
     print(f"混合採樣策略: 欠採樣+過採樣")
     print(f"模型: XGBoost with GPU acceleration")
     print(f"\n最佳評估指標 (驗證集):")
