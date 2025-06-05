@@ -10,3 +10,4 @@ catboost_info/
 model_output/
 *.DS_Store
 !california_accidents_2023_predictions.csv 
+!california_accidents_2022_04_to_2023_03_predictions.csv
